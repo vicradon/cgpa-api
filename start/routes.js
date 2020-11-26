@@ -21,4 +21,15 @@ Route.on("/").render("welcome");
 Route.group(() => {
   Route.post("register", "UserController.register").middleware("guest");
   Route.post("login", "UserController.login").middleware("guest");
+
+  Route.get("/users/profile", "UserController.show").middleware(["auth"]);
+  Route.patch("/users/profile", "UserController.updateProfile").middleware([
+    "auth",
+  ]);
+  Route.patch("/users/email", "UserController.updateEmail").middleware([
+    "auth",
+  ]);
+  Route.patch("/users/password", "UserController.updatePassword").middleware([
+    "auth",
+  ]);
 }).prefix("api/v1");
