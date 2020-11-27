@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node ace test"
-},
+  },
   "keywords": [
     "adonisjs",
     "adonis-app"

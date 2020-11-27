@@ -32,4 +32,7 @@ Route.group(() => {
   Route.patch("/users/password", "UserController.updatePassword").middleware([
     "auth",
   ]);
+
+  Route.resource("courses", "CourseController").apiOnly().middleware(["auth"]);
+
 }).prefix("api/v1");
