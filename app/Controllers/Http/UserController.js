@@ -1,16 +1,20 @@
 "use strict";
 
-const User = use('App/Models/User');
+const User = use("App/Models/User");
+const Preference = use("App/Models/Preference");
+const Cumulative = use("App/Models/Cumulative");
+const GradeSystem = use("App/Models/GradeSystem");
 const { validateAll } = use("Validator");
 
 class UserController {
   async register({ auth, request, response }) {
     try {
-      const { email, password } = request.all();
+      const { email, password, grade_system } = request.all();
 
       const rules = {
         email: "required|email|unique:users,email",
         password: "required|min:8",
+        grade_system: "in:4,5",
       };
       const validation = await validateAll(request.all(), rules);
 
@@ -22,6 +26,23 @@ class UserController {
         email,
         password,
       });
+
+      const preference = new Preference();
+      const cumulative = await Cumulative.create({
+        credit_load: 0,
+        grade_point: 0,
+        grade_point_average: 0,
+      });
+
+      const gradeSystemInstance = await GradeSystem.findBy(
+        "point",
+        grade_system | "5"
+      );
+
+      await preference.gradeSystem().associate(gradeSystemInstance);
+
+      await user.preference().save(preference);
+      await user.cumulative().save(cumulative);
 
       const authedUser = await auth.withRefreshToken().attempt(email, password);
       return response.status(201).send(authedUser);
@@ -51,7 +72,6 @@ class UserController {
     }
   }
 
-
   async show({ auth, response }) {
     try {
       const user = await auth.user;
@@ -60,7 +80,6 @@ class UserController {
       return response.status(500).send(error);
     }
   }
-
 
   async updateProfile({ auth, request, response }) {
     try {
@@ -85,8 +104,6 @@ class UserController {
       return response.status(500).send(error);
     }
   }
-
-
 }
 
 module.exports = UserController;

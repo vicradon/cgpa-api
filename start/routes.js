@@ -35,4 +35,6 @@ Route.group(() => {
 
   Route.resource("courses", "CourseController").apiOnly().middleware(["auth"]);
 
+  Route.get("cumulative", "CumulativeController.show").middleware(["auth"]);
+  Route.patch("cumulative", "CumulativeController.update").middleware(["auth"]);
 }).prefix("api/v1");
